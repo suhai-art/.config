@@ -21,3 +21,5 @@
 
 !i3.bak/
 !i3.bak/**
+
+!setup.sh
