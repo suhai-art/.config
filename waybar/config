@@ -1,0 +1,134 @@
+{
+    "height": 28,
+    "spacing": 0,
+
+    "modules-left": [
+        "sway/workspaces",
+        "sway/mode",
+        "sway/scratchpad",
+        "custom/media"
+    ],
+
+    "modules-center": [
+        
+    ],
+
+    "modules-right": [
+        "pulseaudio",
+        "network",
+        "cpu",
+        "memory",
+        "temperature",
+        "backlight",
+        "keyboard-state",
+        "sway/language",
+        "battery",
+        "tray",
+        "clock"
+    ],
+
+    "sway/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": false,
+        "warp-on-scroll": false,
+        // "format": "{icon}",
+        //
+        // "format-icons": {
+        //     "1": "",
+        //     "2": "",
+        //     "3": "",
+        //     "4": "",
+        //     "5": "",
+        //     "6": "",
+        //     "7": "",
+        //     "8": "",
+        //     "9": "",
+        //     "urgent": "",
+        //     "focused": "",
+        //     "default": ""
+        // }
+    },
+
+    // "sway/mode": {
+    //     "format": " {}"
+    // },
+
+    "sway/scratchpad": {
+        "format": " {count}",
+        "show-empty": false,
+        "tooltip": true,
+        "tooltip-format": "{app}: {title}"
+    },
+
+    "clock": {
+        "format": " {:%H:%M}",
+        "format-alt": " {:%a %d/%m/%Y}",
+        "tooltip-format": "<big>{:%B %Y}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+
+    "cpu": {
+        "format": " {usage}%",
+        "tooltip": false,
+        "interval": 2
+    },
+
+    "memory": {
+        "format": " {used:0.1f}G",
+        "interval": 5
+    },
+
+    "network": {
+        "format-wifi": " {essid}",
+        "format-ethernet": " wired",
+        "format-disconnected": " offline"
+
+    },
+
+    "pulseaudio": {
+        "format": " {volume}%",
+        "format-muted": " muted"
+
+    },
+    //
+    // "battery": {
+    //     "interval": 5,
+    //     "states": {
+    //         // "good": 95,
+    //         "warning": 30,
+    //         "critical": 15
+    //     },
+    //     "format": "{capacity}% {icon}",
+    //     "format-charging": "{capacity}% ",
+    //     "format-plugged": "{capacity}% ",
+    //     "format-alt": "{time} {icon}",
+    //     // "format-good": "", // An empty format will hide the module
+    //     // "format-full": "",
+    //     "format-icons": ["", "", "", "", ""]
+    // },
+    "battery": {
+        "interval": 5,
+        "format": " {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%"
+    },
+
+    "temperature": {
+        "format": " {temperatureC}°C"
+    },
+
+    "backlight": {
+        "format": " {percent}%"
+    },
+
+    "keyboard-state": {
+        "format": " {name}"
+    },
+
+    "sway/language": {
+        "format": " {short}"
+    },
+
+    "tray": {
+        "spacing": 10,
+    },
+}

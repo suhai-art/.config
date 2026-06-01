@@ -1,0 +1,246 @@
+/* ============================================================
+   Waybar — Dark Minimalist
+   Paleta: bg #0e0e0e  surface #1e1e1e  border #2a2a2a
+           accent #4a9eff  text #d4d4d4  dim #6b6b6b
+   ============================================================ */
+
+/* ── Variáveis ─────────────────────────────────────────────── */
+* {
+    font-family: JetBrainsMono Nerd Font;
+    font-size: 12px;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+}
+
+/* ── Janela principal ──────────────────────────────────────── */
+window#waybar {
+    background-color: #0e0e0e;
+    border-bottom: 1px solid #2a2a2a;
+    color: #d4d4d4;
+    transition-property: background-color;
+    transition-duration: 0.3s;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+/* ── Workspaces ────────────────────────────────────────────── */
+#workspaces {
+    margin: 0 4px;
+}
+
+#workspaces button {
+    padding: 0 8px;
+    background-color: transparent;
+    color: #6b6b6b;
+    border-bottom: 2px solid transparent;
+}
+
+#workspaces button:hover {
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+}
+
+#workspaces button.focused {
+    color: #d4d4d4;
+    border-bottom: 2px solid #4a9eff;
+}
+
+#workspaces button.urgent {
+    color: #e05c5c;
+    border-bottom: 2px solid #e05c5c;
+}
+
+/* ── Separador entre módulos ───────────────────────────────── */
+#mode,
+#clock,
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#backlight,
+#network,
+#pulseaudio,
+#wireplumber,
+#custom-media,
+#tray,
+#idle_inhibitor,
+#scratchpad,
+#mpd,
+#keyboard-state,
+#language {
+    padding: 0 10px;
+    color: #d4d4d4;
+    border-left: 1px solid #2a2a2a;
+}
+
+#window,
+#workspaces {
+    border: none;
+}
+
+/* ── Clock ─────────────────────────────────────────────────── */
+#clock {
+    color: #4a9eff;
+    font-weight: bold;
+}
+
+/* ── CPU ───────────────────────────────────────────────────── */
+#cpu {
+    color: #89d4a0;
+}
+
+/* ── Memory ────────────────────────────────────────────────── */
+#memory {
+    color: #b48ead;
+}
+
+/* ── Temperature ───────────────────────────────────────────── */
+#temperature {
+    color: #d4d4d4;
+}
+
+#temperature.critical {
+    color: #e05c5c;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+/* ── Backlight ─────────────────────────────────────────────── */
+#backlight {
+    color: #d4d4d4;
+}
+
+/* ── Battery ───────────────────────────────────────────────── */
+#battery {
+    color: #d4d4d4;
+}
+
+#battery.charging,
+#battery.plugged {
+    color: #89d4a0;
+}
+
+#battery.warning:not(.charging) {
+    color: #f0a500;
+}
+
+#battery.critical:not(.charging) {
+    color: #e05c5c;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+/* ── Network ───────────────────────────────────────────────── */
+#network {
+    color: #d4d4d4;
+}
+
+#network.disconnected {
+    color: #e05c5c;
+}
+
+/* ── Pulseaudio ────────────────────────────────────────────── */
+#pulseaudio {
+    color: #d4d4d4;
+}
+
+#pulseaudio.muted {
+    color: #6b6b6b;
+}
+
+/* ── MPD ───────────────────────────────────────────────────── */
+#mpd {
+    color: #89d4a0;
+}
+
+#mpd.disconnected,
+#mpd.stopped {
+    color: #6b6b6b;
+}
+
+#mpd.paused {
+    color: #b48ead;
+}
+
+/* ── Idle Inhibitor ────────────────────────────────────────── */
+#idle_inhibitor {
+    color: #6b6b6b;
+}
+
+#idle_inhibitor.activated {
+    color: #4a9eff;
+}
+
+/* ── Tray ──────────────────────────────────────────────────── */
+#tray {
+    color: #d4d4d4;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    color: #e05c5c;
+}
+
+/* ── Language ──────────────────────────────────────────────── */
+#language {
+    color: #6b6b6b;
+    min-width: 20px;
+}
+
+/* ── Keyboard State ────────────────────────────────────────── */
+#keyboard-state {
+    color: #6b6b6b;
+    min-width: 16px;
+}
+
+#keyboard-state > label.locked {
+    color: #f0a500;
+}
+
+/* ── Scratchpad ────────────────────────────────────────────── */
+#scratchpad {
+    color: #6b6b6b;
+}
+
+#scratchpad.empty {
+    background-color: transparent;
+}
+
+/* ── Custom Media ──────────────────────────────────────────── */
+#custom-media {
+    color: #89d4a0;
+    min-width: 100px;
+}
+
+/* ── Animação blink (crítico) ──────────────────────────────── */
+@keyframes blink {
+    to {
+        color: #0e0e0e;
+        background-color: #e05c5c;
+    }
+}
+
+/* ── Mode ──────────────────────────────────────────────────── */
+#mode {
+    color: #4a9eff;
+    border-bottom: 2px solid #4a9eff;
+}
+
+/* ── Focus label ───────────────────────────────────────────── */
+label:focus {
+    background-color: #1e1e1e;
+}
