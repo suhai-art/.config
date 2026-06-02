@@ -15,6 +15,7 @@
 
     "modules-right": [
         "pulseaudio",
+        "custom/hourly",
         // "network"
         "cpu",
         "memory",
@@ -26,6 +27,13 @@
         "tray",
         "clock"
     ],
+
+    "custom/hourly": {
+        "exec": "~/.config/waybar/scripts/hourly-waybar",
+        "return-type": "json",
+        "interval": 5,
+        "tooltip": true
+    },
 
     "sway/workspaces": {
         "disable-scroll": true,
