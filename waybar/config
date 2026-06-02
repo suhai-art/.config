@@ -15,7 +15,7 @@
 
     "modules-right": [
         "pulseaudio",
-        "network",
+        // "network"
         "cpu",
         "memory",
         "temperature",
@@ -86,8 +86,8 @@
 
     "pulseaudio": {
         "format": " {volume}%",
-        "format-muted": " muted"
-
+        "format-muted": " muted",
+        "on-click": "pavucontrol"
     },
     //
     // "battery": {
