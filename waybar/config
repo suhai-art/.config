@@ -129,7 +129,9 @@
     },
 
     "keyboard-state": {
-        "format": " {name}"
+        "format": "{name} {icon}",
+        "numlock": true,
+        "capslock": true
     },
 
     "sway/language": {

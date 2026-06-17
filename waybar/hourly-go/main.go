@@ -185,9 +185,9 @@ func buildOutput(m Metrics, now time.Time) waybarOutput {
 
 func buildText(m Metrics) string {
 	if m.Config.HasRate() {
-		return fmt.Sprintf("⏱ %s", formatCurrency(m.Config.Currency, m.TodayEarnings))
+		return fmt.Sprintf("%s", formatCurrency(m.Config.Currency, m.TodayEarnings))
 	}
-	return fmt.Sprintf("⏱ %s", formatDuration(m.TodayHours))
+	return fmt.Sprintf("%s", formatDuration(m.TodayHours))
 }
 
 func buildTooltip(m Metrics, now time.Time) string {
@@ -242,7 +242,7 @@ func run() error {
 func main() {
 	if err := run(); err != nil {
 		_ = json.NewEncoder(os.Stdout).Encode(map[string]string{
-			"text":    "⏱ erro",
+			"text":    "erro",
 			"tooltip": err.Error(),
 			"class":   "error",
 		})

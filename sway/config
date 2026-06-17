@@ -219,11 +219,12 @@ bindsym $mod+r mode "resize"
 exec blueman-applet
 exec nm-applet
 exec waybar
-input "type:keyboard" {
-        xkb_layout us
-        xkb_variant intl
-
+input type:keyboard {
+    xkb_layout us,br
+    xkb_variant intl,
 }
+# Mudar layout do teclado
+bindsym $mod+x input type:keyboard xkb_switch_layout next
 
 bindsym $mod+Shift+w exec killall waybar || waybar
 bindsym $mod+Shift+p exec grim -g "$(slurp)" - | wl-copy
@@ -261,4 +262,4 @@ client.urgent           #9d2a2a #9d2a2a #ffffff #ff5555 #9d2a2a
 
 for_window [class=".*"] opacity 0.95
 
-include /etc/sway/config.d/*
+include /etc/sway
