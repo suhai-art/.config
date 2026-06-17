@@ -9,19 +9,15 @@
         "custom/media"
     ],
 
-    "modules-center": [
-        
-    ],
+    "modules-center": [],
 
     "modules-right": [
         "pulseaudio",
         "custom/hourly",
-        // "network"
         "cpu",
         "memory",
         "temperature",
         "backlight",
-        "keyboard-state",
         "sway/language",
         "battery",
         "tray",
@@ -38,28 +34,8 @@
     "sway/workspaces": {
         "disable-scroll": true,
         "all-outputs": false,
-        "warp-on-scroll": false,
-        // "format": "{icon}",
-        //
-        // "format-icons": {
-        //     "1": "",
-        //     "2": "",
-        //     "3": "",
-        //     "4": "",
-        //     "5": "",
-        //     "6": "",
-        //     "7": "",
-        //     "8": "",
-        //     "9": "",
-        //     "urgent": "",
-        //     "focused": "",
-        //     "default": ""
-        // }
+        "warp-on-scroll": false
     },
-
-    // "sway/mode": {
-    //     "format": " {}"
-    // },
 
     "sway/scratchpad": {
         "format": " {count}",
@@ -85,34 +61,12 @@
         "interval": 5
     },
 
-    "network": {
-        "format-wifi": " {essid}",
-        "format-ethernet": " wired",
-        "format-disconnected": " offline"
-
-    },
-
     "pulseaudio": {
         "format": " {volume}%",
         "format-muted": " muted",
         "on-click": "pavucontrol"
     },
-    //
-    // "battery": {
-    //     "interval": 5,
-    //     "states": {
-    //         // "good": 95,
-    //         "warning": 30,
-    //         "critical": 15
-    //     },
-    //     "format": "{capacity}% {icon}",
-    //     "format-charging": "{capacity}% ",
-    //     "format-plugged": "{capacity}% ",
-    //     "format-alt": "{time} {icon}",
-    //     // "format-good": "", // An empty format will hide the module
-    //     // "format-full": "",
-    //     "format-icons": ["", "", "", "", ""]
-    // },
+
     "battery": {
         "interval": 5,
         "format": " {capacity}%",
@@ -128,17 +82,11 @@
         "format": " {percent}%"
     },
 
-    "keyboard-state": {
-        "format": "{name} {icon}",
-        "numlock": true,
-        "capslock": true
-    },
-
     "sway/language": {
-        "format": " {short}"
+        "format": " {short}"
     },
 
     "tray": {
-        "spacing": 10,
-    },
+        "spacing": 10
+    }
 }
