@@ -216,13 +216,16 @@ bindsym $mod+r mode "resize"
 #     }
 # }
 #
-exec blueman-applet
-exec nm-applet
-exec waybar
+exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+
 input type:keyboard {
     xkb_layout us,br
     xkb_variant intl,
 }
+exec blueman-applet
+exec nm-applet
+exec waybar
 # Mudar layout do teclado
 bindsym $mod+x input type:keyboard xkb_switch_layout next
 

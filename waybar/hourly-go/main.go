@@ -12,6 +12,7 @@ import (
 const (
 	defaultCurrency   = "R$"
 	defaultHourlyRate = 0.0
+	defaultDailyHours = 0.0
 )
 
 type Entry struct {
@@ -25,17 +26,21 @@ func (e Entry) IsOpen() bool { return e.OutDate == nil }
 type Config struct {
 	HourlyRate float64
 	Currency   string
+	DailyHours float64
 }
 
-func (c Config) HasRate() bool { return c.HourlyRate > 0 }
+func (c Config) HasRate() bool      { return c.HourlyRate > 0 }
+func (c Config) HasDailyGoal() bool { return c.DailyHours > 0 }
 
 type Metrics struct {
-	TodayHours    float64
-	MonthHours    float64
-	TodayEarnings float64
-	MonthEarnings float64
-	Config        Config
-	OpenEntry     *Entry
+	TodayHours     float64
+	MonthHours     float64
+	TodayEarnings  float64
+	MonthEarnings  float64
+	RemainingHours float64
+	GoalReached    bool
+	Config         Config
+	OpenEntry      *Entry
 }
 
 func readJSON(path string, dest any) error {
@@ -47,19 +52,38 @@ func readJSON(path string, dest any) error {
 }
 
 type rawConfig struct {
-	HourlyRate float64 `json:"hourly_rate"`
-	Currency   string  `json:"currency"`
+	HourlyRate        float64 `json:"hourly_rate"`
+	Currency          string  `json:"currency"`
+	DailyHours        float64 `json:"daily_hours"`
+	PreviewDailyHours float64 `json:"preview_daily_hours"`
 }
 
 func loadConfig(path string) Config {
 	var raw rawConfig
 	if err := readJSON(path, &raw); err != nil {
-		return Config{HourlyRate: defaultHourlyRate, Currency: defaultCurrency}
+		return Config{
+			HourlyRate: defaultHourlyRate,
+			Currency:   defaultCurrency,
+			DailyHours: defaultDailyHours,
+		}
 	}
 	if raw.Currency == "" {
 		raw.Currency = defaultCurrency
 	}
-	return Config{HourlyRate: raw.HourlyRate, Currency: raw.Currency}
+	return Config{
+		HourlyRate: raw.HourlyRate,
+		Currency:   raw.Currency,
+		DailyHours: resolveDailyHours(raw),
+	}
+}
+
+// resolveDailyHours prioriza "daily_hours"; se ausente, usa "preview_daily_hours"
+// como alias de compatibilidade.
+func resolveDailyHours(raw rawConfig) float64 {
+	if raw.PreviewDailyHours > 0 {
+		return raw.PreviewDailyHours
+	}
+	return raw.DailyHours
 }
 
 type rawEntry struct {
@@ -110,15 +134,32 @@ func computeMetrics(entries []Entry, cfg Config, now time.Time) Metrics {
 	todayHours := sumHours(entries, now, func(e Entry) bool { return isSameDay(e.InDate, now) })
 	monthHours := sumHours(entries, now, func(e Entry) bool { return isSameMonth(e.InDate, now) })
 	openEntry := findOpenEntry(entries, now)
+	remainingHours, goalReached := computeGoalProgress(todayHours, cfg)
 
 	return Metrics{
-		TodayHours:    todayHours,
-		MonthHours:    monthHours,
-		TodayEarnings: todayHours * cfg.HourlyRate,
-		MonthEarnings: monthHours * cfg.HourlyRate,
-		Config:        cfg,
-		OpenEntry:     openEntry,
+		TodayHours:     todayHours,
+		MonthHours:     monthHours,
+		TodayEarnings:  todayHours * cfg.HourlyRate,
+		MonthEarnings:  monthHours * cfg.HourlyRate,
+		RemainingHours: remainingHours,
+		GoalReached:    goalReached,
+		Config:         cfg,
+		OpenEntry:      openEntry,
 	}
+}
+
+// computeGoalProgress calcula quanto falta para bater a meta diária de horas.
+// Se não houver meta configurada, retorna (0, false).
+func computeGoalProgress(todayHours float64, cfg Config) (remaining float64, reached bool) {
+	if !cfg.HasDailyGoal() {
+		return 0, false
+	}
+
+	diff := cfg.DailyHours - todayHours
+	if diff <= 0 {
+		return diff, true
+	}
+	return diff, false
 }
 
 func sumHours(entries []Entry, now time.Time, predicate func(Entry) bool) float64 {
@@ -184,10 +225,28 @@ func buildOutput(m Metrics, now time.Time) waybarOutput {
 }
 
 func buildText(m Metrics) string {
-	if m.Config.HasRate() {
-		return fmt.Sprintf("%s", formatCurrency(m.Config.Currency, m.TodayEarnings))
+	base := buildBaseText(m)
+	if suffix := buildGoalSuffix(m); suffix != "" {
+		return fmt.Sprintf("%s %s", base, suffix)
 	}
-	return fmt.Sprintf("%s", formatDuration(m.TodayHours))
+	return base
+}
+
+func buildBaseText(m Metrics) string {
+	if m.Config.HasRate() {
+		return formatCurrency(m.Config.Currency, m.TodayEarnings)
+	}
+	return formatDuration(m.TodayHours)
+}
+
+func buildGoalSuffix(m Metrics) string {
+	if !m.Config.HasDailyGoal() {
+		return ""
+	}
+	if m.GoalReached {
+		return fmt.Sprintf("🎯 (%s)", formatDuration((m.RemainingHours * -1)))
+	}
+	return fmt.Sprintf("🚀 (-%s)", formatDuration(m.RemainingHours))
 }
 
 func buildTooltip(m Metrics, now time.Time) string {
@@ -199,14 +258,33 @@ func buildTooltip(m Metrics, now time.Time) string {
 		monthLine += fmt.Sprintf("  •  %s", formatCurrency(m.Config.Currency, m.MonthEarnings))
 	}
 
-	return strings.Join([]string{
-		todayLine,
-		monthLine,
+	lines := []string{todayLine, monthLine}
+
+	if goalLine := buildGoalLine(m); goalLine != "" {
+		lines = append(lines, goalLine)
+	}
+
+	lines = append(
+		lines,
 		"",
 		buildOpenEntryLine(m),
 		"",
 		fmt.Sprintf("🔄 %s", now.Format("15:04:05")),
-	}, "\n")
+	)
+
+	return strings.Join(lines, "\n")
+}
+
+// buildGoalLine descreve o progresso em relação à meta diária configurada.
+// Retorna string vazia quando não há meta definida.
+func buildGoalLine(m Metrics) string {
+	if !m.Config.HasDailyGoal() {
+		return ""
+	}
+	if m.GoalReached {
+		return fmt.Sprintf("🎯 Meta batida (%s)", formatDuration(m.Config.DailyHours))
+	}
+	return fmt.Sprintf("⏳ Faltam %s p/ meta de %s", formatDuration(m.RemainingHours), formatDuration(m.Config.DailyHours))
 }
 
 func buildOpenEntryLine(m Metrics) string {
@@ -217,6 +295,9 @@ func buildOpenEntryLine(m Metrics) string {
 }
 
 func buildClass(m Metrics) string {
+	if m.Config.HasDailyGoal() && m.GoalReached {
+		return "goal-reached"
+	}
 	if m.OpenEntry != nil {
 		return "open"
 	}
